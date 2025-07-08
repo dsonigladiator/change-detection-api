@@ -11,11 +11,47 @@ app = FastAPI()
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development. Change to specific domain(s) for production!
+    allow_origins=["*"],  # Change this in production!
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Root endpoint with basic HTML instructions
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    return """
+    <html>
+        <head>
+            <title>Change Detection API</title>
+        </head>
+        <body style="font-family:sans-serif;max-width:700px;margin:40px auto;">
+            <h1>Change Detection API</h1>
+            <p>This API allows you to upload two images and visualize the detected changes between them.</p>
+            <h2>How to Use:</h2>
+            <ul>
+                <li>
+                    <b>POST</b> to <code>/change-detection/</code> with form-data containing:<br>
+                    <code>before</code>: the first image file<br>
+                    <code>after</code>: the second image file
+                </li>
+            </ul>
+            <h3>Sample <code>curl</code> command:</h3>
+            <pre>
+curl -X POST {your_url}/change-detection/ \\
+  -F "before=@before.jpg" -F "after=@after.jpg"
+            </pre>
+            <h3>Sample HTML Upload Form:</h3>
+            <form action="/change-detection/" method="post" enctype="multipart/form-data" target="_blank">
+              <label>Before image: <input type="file" name="before" /></label><br>
+              <label>After image: <input type="file" name="after" /></label><br>
+              <button type="submit">Detect Change</button>
+            </form>
+            <hr>
+            <p style="font-size:13px;color:#666">Built with ❤️ using FastAPI</p>
+        </body>
+    </html>
+    """
 
 # Helper: Convert image to base64
 def image_to_base64(img_array):
@@ -55,6 +91,7 @@ async def change_detection(before: UploadFile = File(...), after: UploadFile = F
     html_content = f'''
     <html>
     <head>
+        <title>Change Detection Result</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.1/nouislider.min.css">
     </head>
     <body>
