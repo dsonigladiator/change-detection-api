@@ -59,11 +59,10 @@ async def change_detection(before: UploadFile = File(...), after: UploadFile = F
         <script>
             const slider = document.getElementById('slider');
             const afterImg = document.getElementById('after');
-
-            slider.addEventListener('input', () => {
+            slider.addEventListener('input', () => {{
                 let val = slider.value;
                 afterImg.style.clip = `rect(0px, ${val}px, 400px, 0px)`;
-            });
+            }});
         </script>
 
         <h3>Change Map:</h3>
@@ -73,5 +72,3 @@ async def change_detection(before: UploadFile = File(...), after: UploadFile = F
     '''
 
     return HTMLResponse(content=html_content)
-
-# To run: uvicorn filename:app --reload
